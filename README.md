@@ -7,5 +7,6 @@ In order to compile the project, you need to install *GTKMM* library:
 
 ## Compilation
 In order to compile main.cxx, type in your console:
-
+```
 $ g++ main.cxx --std=gnu++14 `pkg-config gtkmm-3.0 --cflags --libs`
+```
