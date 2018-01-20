@@ -55,7 +55,7 @@ Calculator::~Calculator(){
 }
 
 void Calculator::fillBuffer(string text){
-    // TextView must have a TextBuffer which will refresh every single time we click "Convert" button1
+    // TextView must have a TextBuffer which will refresh every single time we click "Convert" button
     // (see: Calculator::convertNumber())
     textBuffer = Gtk::TextBuffer::create();
     textBuffer->set_text(text);
@@ -63,17 +63,51 @@ void Calculator::fillBuffer(string text){
 }
 
 void Calculator::convertNumber(){
+    bool check = true;
     int button1 = buttons1.whichButton(); // input base: 2, 10 or 16
     int button2 = buttons2.whichButton(); // output base: 2, 10 or 16
     string text = buttons1.getText(); // get text from Gtk::Entry in input section
-    if(button1 == button2) this->fillBuffer(text); // trivial case - no conversion needed
-    else{
-        int formattedNumber = stoi(text /* string to be parsed */, nullptr, button1 /* base */); //string to integer - auto conversion form string to number with given base
-        string formattedText;
-        if(button2 == 10) formattedText = to_string(formattedNumber); // formattedNumber is already converted in base 10
-        else formattedText = convert(formattedNumber, button2); // see: conversion.h
-        this->fillBuffer(formattedText);
+    if(!text.empty()){
+        if(button1 == 2){ // error check for base = 2
+            for(int i=0; i<text.length(); ++i){
+                if((int)text[i] != 48 && (int)text[i] != 49){
+                    this->fillBuffer("Error!");
+                    check = false;
+                    break;
+                }
+            }
+        }
+        else if(button1 == 10){ // error check for base = 10
+            for(int i=0; i<text.length(); ++i){
+                if((int)text[i] < 48 || (int)text[i] > 57){
+                    this->fillBuffer("Error!");
+                    check = false;
+                    break;
+                }
+            }
+        }
+        else if(button1 == 16){ // error check for base = 16
+            for(int i=0; i<text.length(); ++i){
+                if((int)text[i] < 48 || ((int)text[i] > 57 && (int)text[i] < 65) || (int)text[i] > 70){
+                    this->fillBuffer("Error!");
+                    check = false;
+                    break;
+                }
+            }
+        }
+        // conversion
+        if(check){
+            if(button1 == button2) this->fillBuffer(text); // trivial case - no conversion needed
+            else{
+                int formattedNumber = stoi(text /* string to be parsed */, nullptr, button1 /* base */); //string to integer - auto conversion form string to number with given base
+                string formattedText;
+                if(button2 == 10) formattedText = to_string(formattedNumber); // formattedNumber is already converted in base 10
+                else formattedText = convert(formattedNumber, button2); // see: conversion.h
+                this->fillBuffer(formattedText);
+            }
+        }
     }
+    else this->fillBuffer("No number means no conversion...");
 
 }
 #endif
