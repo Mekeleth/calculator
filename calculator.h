@@ -15,7 +15,7 @@
 
 using namespace std;
 
-class Calculator: public Gtk::Window {
+class Calculator: public Gtk::Window { // class that extends Gtk::Window - important
 public:
     Calculator();
     ~Calculator();
@@ -36,16 +36,18 @@ Calculator::Calculator(): mButton("Convert"), topBox(Gtk::ORIENTATION_VERTICAL,G
 
     add(topBox);
 
-    mButton.signal_clicked().connect(sigc::mem_fun(*this,&Calculator::convertNumber));
-    mButton.set_size_request(50,30);
+    mButton.signal_clicked().connect(sigc::mem_fun(*this,&Calculator::convertNumber)); // connect click signal to function
+    mButton.set_size_request(50,30); // set minimum size of width and height of this button
 
+    // add two radio buttons to one radioBox
     radioBox.pack_start(buttons1);
     radioBox.pack_start(buttons2);
+    // add everything to topBox (window can only display one widget, so we pack everything into it)
     topBox.pack_start(radioBox);
     topBox.pack_start(output);
     topBox.pack_start(mSeparator);
     topBox.pack_start(mButton);
-    // Show all children of the window
+    // show all children of the window
     show_all_children();
 }
 
@@ -53,30 +55,23 @@ Calculator::~Calculator(){
 }
 
 void Calculator::fillBuffer(string text){
+    // TextView must have a TextBuffer which will refresh every single time we click "Convert" button1
+    // (see: Calculator::convertNumber())
     textBuffer = Gtk::TextBuffer::create();
     textBuffer->set_text(text);
     output.set_buffer(textBuffer);
 }
 
 void Calculator::convertNumber(){
-    int button1 = buttons1.whichButton();
-    int button2 = buttons2.whichButton();
-    string text = buttons1.getText();
-    if(button1 == button2) this->fillBuffer(text);
+    int button1 = buttons1.whichButton(); // input base: 2, 10 or 16
+    int button2 = buttons2.whichButton(); // output base: 2, 10 or 16
+    string text = buttons1.getText(); // get text from Gtk::Entry in input section
+    if(button1 == button2) this->fillBuffer(text); // trivial case - no conversion needed
     else{
-        int formattedNumber = stoi(text, nullptr, button1);
+        int formattedNumber = stoi(text /* string to be parsed */, nullptr, button1 /* base */); //string to integer - auto conversion form string to number with given base
         string formattedText;
-        switch(button2){
-            case 2:
-                formattedText = convert(formattedNumber, 2);
-            break;
-            case 10:
-                formattedText = to_string(formattedNumber);
-            break;
-            case 16:
-                formattedText = convert(formattedNumber, 16);
-            break;
-        }
+        if(button2 == 10) formattedText = to_string(formattedNumber); // formattedNumber is already converted in base 10
+        else formattedText = convert(formattedNumber, button2); // see: conversion.h
         this->fillBuffer(formattedText);
     }
 

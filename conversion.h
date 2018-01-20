@@ -11,7 +11,7 @@ string convert(int number, int base){
     int modulo;
     while(number > 0){
         modulo = number%base;
-        switch(modulo){
+        switch(modulo){ // depending on base - if base=16 then we have to be careful and see if modulo is higher than 10
             case 10:
                 output.append("A");
             break;
@@ -36,7 +36,7 @@ string convert(int number, int base){
         number/=base;
     }
     char help;
-    for(int i=0; i<output.length()/2; ++i){
+    for(int i=0; i<output.length()/2; ++i){ // reversing the output string
         help = output[i];
         output[i] = output[output.length()-i-1];
         output[output.length()-i-1] = help;
