@@ -18,7 +18,7 @@ public:
     RadioButtons();
     ~RadioButtons();
     int whichButton();
-    string getNumber();
+    string getText();
 
 protected:
     Gtk::Box topBox, box;
@@ -71,7 +71,7 @@ int RadioButtons::whichButton(){
     return value;
 }
 
-string RadioButtons::getNumber(){
+string RadioButtons::getText(){
     return this->input.get_text();
 }
 #endif

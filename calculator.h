@@ -11,7 +11,7 @@
 #include <iostream>
 #include <string>
 #include "radio_buttons.h"
-#include "conversions.h"
+#include "conversion.h"
 
 using namespace std;
 
@@ -61,44 +61,24 @@ void Calculator::fillBuffer(string text){
 void Calculator::convertNumber(){
     int button1 = buttons1.whichButton();
     int button2 = buttons2.whichButton();
-    string text = buttons1.getNumber(), formattedText;
-    cout << button1 << endl << button2 << endl << text.length() << endl;
-    if(button1 = button2) this->fillBuffer(text);
-    else if(button1 < button2){
-        switch(button1){
-            case 2:
-                switch(button2){
-                    case 10:
-                        formattedText = binDec(text, true);
-                    break;
-                    case 16:
-                        formattedText = binHex(text, true);
-                    break;
-                }
-            break;
-            case 10:
-                formattedText = decHex(text, true);
-            break;
-        }
-        this->fillBuffer(formattedText);
-    }
+    string text = buttons1.getText();
+    if(button1 == button2) this->fillBuffer(text);
     else{
-        switch(button1){
-            case 16:
-                switch(button2){
-                    case 10:
-                        formattedText = decHex(text, false);
-                    break;
-                    case 2:
-                        formattedText = binHex(text, false);
-                    break;
-                }
+        int formattedNumber = stoi(text, nullptr, button1);
+        string formattedText;
+        switch(button2){
+            case 2:
+                formattedText = convert(formattedNumber, 2);
             break;
             case 10:
-                formattedText = binDec(text, false);
+                formattedText = to_string(formattedNumber);
+            break;
+            case 16:
+                formattedText = convert(formattedNumber, 16);
             break;
         }
         this->fillBuffer(formattedText);
     }
+
 }
 #endif
